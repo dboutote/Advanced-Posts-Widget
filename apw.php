@@ -2,7 +2,7 @@
 /**
  * Advanced Posts Widget
  *
- * @package APW_Recent_Posts
+ * @package Advanced_Posts_Widget
  *
  * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
  * @version     1.0
@@ -27,6 +27,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+define( 'ADVANCED_POSTS_WIDGET_FILE', __FILE__ );
+
 
 /**
  * Instantiates the main Advanced Posts Widget instance
@@ -35,12 +37,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function _advanced_posts_widget_init() {
 
-	include dirname( __FILE__ ) . '/inc/class-apw-recent-posts-utilities.php';
-	include dirname( __FILE__ ) . '/inc/class-widget-apw-recent-posts.php';
-	include dirname( __FILE__ ) . '/inc/class-apw-recent-posts.php';
-
-	$APW_Recent_Posts = new APW_Recent_Posts( __FILE__ );
-	$APW_Recent_Posts->init();
+	include dirname( __FILE__ ) . '/inc/class-apw-utils.php';
+	include dirname( __FILE__ ) . '/inc/class-apw-fields.php';
+	include dirname( __FILE__ ) . '/inc/class-apw-widget.php';
+	include dirname( __FILE__ ) . '/inc/class-apw-views.php';
+	include dirname( __FILE__ ) . '/inc/class-apw-init.php';
+	
+	$APW_Init = new APW_Init( __FILE__ );
+	$APW_Init->init();
 
 }
 add_action( 'plugins_loaded', '_advanced_posts_widget_init', 99 );
