@@ -1,12 +1,12 @@
 <?php
 
 /**
- * APW_Utils Class
+ * Advanced_Posts_Widget_Utils Class
  *
  * All methods are static, this is basically a namespacing class wrapper.
  *
  * @package Advanced_Posts_Widget
- * @subpackage APW_Utils
+ * @subpackage Advanced_Posts_Widget_Utils
  *
  * @since 1.0
  */
@@ -20,36 +20,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 /**
- * APW_Utils Class
+ * Advanced_Posts_Widget_Utils Class
  *
  * Group of utility methods for use by Advanced_Posts_Widget
  *
  * @since 1.0
  */
-class APW_Utils
+class Advanced_Posts_Widget_Utils
 {
-
 
 	/**
 	 * Generates path to plugin root
 	 *
+	 * @uses WordPress plugin_dir_path()
+	 *
 	 * @access public
 	 *
 	 * @since 1.0
+	 *
+	 * @return string $path Path to plugin root.
 	 */
 	public static function get_apw_path()
 	{
-		$apw_path = plugin_dir_path( ADVANCED_POSTS_WIDGET_FILE );
-		return $apw_path;
+		$path = plugin_dir_path( ADVANCED_POSTS_WIDGET_FILE );
+		return $path;
 	}
 
 
 	/**
 	 * Generates path to subdirectory of plugin root
 	 *
+	 * @see Advanced_Posts_Widget_Utils::get_apw_path()
+	 *
+	 * @uses WordPress trailingslashit()
+	 *
 	 * @access public
 	 *
 	 * @since 1.0
+	 *
+	 * @param string $directory The name of the requested subdirectory.
+	 *
+	 * @return string $sub_path Path to requested sub directory.
 	 */
 	public static function get_apw_sub_path( $directory )
 	{
@@ -57,48 +68,91 @@ class APW_Utils
 			return false;
 		}
 
-		$apw_path = self::get_apw_path();
+		$path = self::get_apw_path();
 
-		$apw_sub_path = $apw_path . trailingslashit( $directory );
+		$sub_path = $path . trailingslashit( $directory );
 
-		return $apw_sub_path;
+		return $sub_path;
 	}
 
 
 	/**
 	 * Generates url to plugin root
 	 *
+	 * @uses WordPress plugin_dir_url()
+	 *
 	 * @access public
 	 *
 	 * @since 1.0
+	 *
+	 * @return string $url URL of plugin root.
 	 */
 	public static function get_apw_url()
 	{
-		$apw_url = plugin_dir_url( ADVANCED_POSTS_WIDGET_FILE );
-		return $apw_url;
+		$url = plugin_dir_url( ADVANCED_POSTS_WIDGET_FILE );
+		return $url;
+	}
+
+
+	/**
+	 * Generates url to subdirectory of plugin root
+	 *
+	 * @see Advanced_Posts_Widget_Utils::get_apw_url()
+	 *
+	 * @uses WordPress trailingslashit()
+	 *
+	 * @access public
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $directory The name of the requested subdirectory.
+	 *
+	 * @return string $sub_url URL of requested sub directory.
+	 */
+	public static function get_apw_sub_url( $directory )
+	{
+		if( ! $directory ){
+			return false;
+		}
+
+		$url = self::get_apw_url();
+
+		$sub_url = $url . trailingslashit( $directory );
+
+		return $sub_url;
 	}
 
 
 	/**
 	 * Generates basename to plugin root
 	 *
+	 * @uses WordPress plugin_basename()
+	 *
 	 * @access public
 	 *
 	 * @since 1.0
+	 *
+	 * @return string $basename Filename of plugin root.
 	 */
 	public static function get_apw_basename()
 	{
-		$apw_basename = plugin_basename( ADVANCED_POSTS_WIDGET_FILE );
-		return $apw_basename;
+		$basename = plugin_basename( ADVANCED_POSTS_WIDGET_FILE );
+		return $basename;
 	}
 
 
 	/**
 	 * Sets default parameters
 	 *
+	 * Use 'apw_instance_defaults' filter to modify accepted defaults.
+	 *
+	 * @uses WordPress current_theme_supports()
+	 *
 	 * @access public
 	 *
 	 * @since 1.0
+	 *
+	 * @return array $defaults The default values for the widget.
 	 */
 	public static function instance_defaults()
 	{
@@ -113,7 +167,6 @@ class APW_Utils
 			'orderby'        => 'date',
 			'tax_term'       => '',
 			'show_thumb'     => 1,
-			'register_thumb' => 0,
 			'thumb_size'     => 0,
 			'thumb_size_w'   => 55,
 			'thumb_size_h'   => 55,
@@ -123,6 +176,7 @@ class APW_Utils
 			'list_style'     => $_list_style,
 			'show_date'      => 0,
 			'date_format'    => 'F j, Y',
+			'css_default'    => 0,
 		);
 
 		$defaults = apply_filters( 'apw_instance_defaults', $_defaults );
@@ -140,7 +194,7 @@ class APW_Utils
 	 *
 	 * @since 1.0
 	 *
-	 * @return string $excerpt Filtered excerpt.
+	 * @return string $excerpt Excerpt text.
 	 */
 	public static function sample_excerpt()
 	{
@@ -152,19 +206,27 @@ class APW_Utils
 	/**
 	 * Retrieves post types to use in widget
 	 *
-	 * Use 'apw_widget_post_type_args' to filter arguments for retrieving post types.
+	 * Use 'apw_get_post_type_args' to filter arguments for retrieving post types.
 	 * Use 'apw_allowed_post_types' to filter post types that can be selected in the widget.
+	 *
+	 * @see Advanced_Posts_Widget_Utils::sanitize_select_array()
+	 *
+	 * @uses WordPress get_post_types()
 	 *
 	 * @access public
 	 *
 	 * @since 1.0
 	 *
-	 * @return array $_ptypes Filtered array of post types.
+	 * @return array $types Allowed post types.
 	 */
 	public static function get_apw_post_types()
 	{
-		$post_type_args = apply_filters( 'apw_widget_post_type_args', array( 'public' => true) );
-		$post_types = get_post_types( $post_type_args, 'objects' );
+		$args = apply_filters( 'apw_get_post_type_args', array( 'public' => true) );
+		$post_types = get_post_types( $args, 'objects' );
+
+		if( empty( $post_types ) ){
+			return false;
+		}
 
 		$_ptypes = array();
 		$_ptypes['all'] = __('All');
@@ -174,10 +236,10 @@ class APW_Utils
 			$_ptypes[ $query_var ] = $post_type->labels->singular_name;
 		}
 
-		$_ptypes = apply_filters( 'apw_allowed_post_types', $_ptypes );
-		$_ptypes = self::sanitize_select_array( $_ptypes );
+		$types = apply_filters( 'apw_allowed_post_types', $_ptypes );
+		$types = self::sanitize_select_array( $types );
 
-		return $_ptypes;
+		return $types;
 	}
 
 
@@ -186,28 +248,34 @@ class APW_Utils
 	 *
 	 * Use 'apw_allowed_taxonomies' to filter taxonomies that can be selected in the widget.
 	 *
+	 * @see Advanced_Posts_Widget_Utils::get_apw_post_types()
+	 * @see Advanced_Posts_Widget_Utils::sanitize_select_array()
+	 *
+	 * @uses WordPress get_object_taxonomies()
+	 * @uses WordPress get_taxonomy()
+	 *
 	 * @access public
 	 *
 	 * @since 1.0
 	 *
-	 * @return array $_ptaxes Filtered array of taxonomies.
+	 * @return array $taxes Allowed taxonomies.
 	 */
 	public static function get_apw_taxonomies()
 	{
 		$_ptaxes = array();
 
-		$_ptypes = self::get_apw_post_types();
+		$post_types = self::get_apw_post_types();
 
-		if( is_array( $_ptypes ) ){
+		if( is_array( $post_types ) ) {
 
-			if( (bool) $_ptypes['all'] ) {
-				unset( $_ptypes['all'] );
+			if( (bool) $post_types['all'] ) {
+				unset( $post_types['all'] );
 			}
 
 			$_post_type_taxes = array();
 
 			// get all taxonomies associated with our allowed post_types
-			foreach( $_ptypes as $name => $label ) {
+			foreach( $post_types as $name => $label ) {
 				$_otaxes = get_object_taxonomies( $name );
 
 				if( count( $_otaxes ) ) {
@@ -240,24 +308,23 @@ class APW_Utils
 			unset( $_ptaxes['post_format'] );
 		}
 
-		$_ptaxes = apply_filters( 'apw_allowed_taxonomies', $_ptaxes );
-		$_ptaxes = self::sanitize_select_array( $_ptaxes );
+		$taxes = apply_filters( 'apw_allowed_taxonomies', $_ptaxes );
+		$taxes = self::sanitize_select_array( $taxes );
 
-		return $_ptaxes;
+		return $taxes;
 	}
-
 
 
 	/**
 	 * Retrieves registered image sizes
 	 *
-	 * Use 'apw_allowed_image_sizes' to filter image that can be selected in the widget.
+	 * Use 'apw_allowed_image_sizes' to filter image sizes that can be selected in the widget.
 	 *
-	 * @uses APW_Utils::sanitize_select_array()
+	 * @see Advanced_Posts_Widget_Utils::sanitize_select_array()
 	 *
 	 * @global $_wp_additional_image_sizes
 	 *
-	 * @see get_intermediate_image_sizes()
+	 * @uses get_intermediate_image_sizes()
 	 *
 	 * @access public
 	 *
@@ -307,11 +374,10 @@ class APW_Utils
 	}
 
 
-
 	/**
 	 * Retrieves specific image size
 	 *
-	 * @uses APW_Utils::get_apw_image_sizes()
+	 * @see Advanced_Posts_Widget_Utils::get_apw_image_sizes()
 	 *
 	 * @access public
 	 *
@@ -337,13 +403,24 @@ class APW_Utils
 	}
 
 
-
 	/**
-	 * Builds html for thumbnail section of post
+	 * Builds html for post thumbnail
+	 *
+	 * Use 'apw_post_thumb_class' to modify image classes.
+	 * Use 'apw_post_thumbnail_html' to modify thumbnail output.
+	 *
+	 * @see Advanced_Posts_Widget_Utils::get_apw_image_size()
+	 *
+	 * @uses WordPres get_post()
+	 * @uses WordPres has_post_thumbnail()
+	 * @uses WordPres get_the_post_thumbnail()
+	 * @uses WordPres the_title_attribute()
 	 *
 	 * @access public
 	 *
 	 * @since 1.0
+	 *
+	 * @return
 	 */
 	public static function get_apw_post_thumbnail( $post = 0, $instance = array() )
 	{
@@ -355,12 +432,13 @@ class APW_Utils
 
 		$_classes = array();
 		$_classes[] = 'apw-post-image';
+		$_classes[] = 'apw-alignleft';
 
 		// was registered size selected?
 		$_size = $instance['thumb_size'];
 
 		// custom size entered
-		if( '' === $_size ){
+		if( empty( $_size ) ){
 			$_w = absint( $instance['thumb_size_w'] );
 			$_h = absint( $instance['thumb_size_h'] );
 			$_size = "apw-thumbnail-{$_w}-{$_h}";
@@ -374,7 +452,6 @@ class APW_Utils
 		if( ! has_post_thumbnail( $_post ) ) {
 			return '';
 		}
-
 
 		if( $_size_exists ){
 			$_get_size = $_size;
@@ -412,9 +489,12 @@ class APW_Utils
 	/**
 	 * Generates publish date
 	 *
-	 * Use 'get_apw_post_date' filter to filter post date before output.
+	 * Use 'get_apw_post_date' filter to modify post date before output.
+	 *
+	 * @uses WordPres get_the_date()
 	 *
 	 * @access public
+	 *
 	 * @since 1.0
 	 *
 	 * @param object $post Post to display.
@@ -430,26 +510,19 @@ class APW_Utils
 			return '';
 		}
 
-		$time_string = '<time pubdate class="entry-date apw-entry-date published updated" datetime="%1$s">%2$s</time>';
-		$time_string = sprintf( $time_string,
-			esc_attr( get_the_date( 'c' ) ),
-			get_the_date( $instance['date_format'] )
-		);
+		$_time = get_the_date( $instance['date_format'], $post->ID );
 
-		$_time = sprintf( '<span class="posted-on apw-posted-on"><span class="screen-reader-text">%1$s </span><a href="%2$s" rel="bookmark">%3$s</a></span>',
-			_x( 'Posted on', 'Used before publish date.' ),
-			esc_url( get_permalink() ),
-			$time_string
-		);
-
-		return apply_filters( 'apw_post_date', $_time, $post, $instance );
+		return apply_filters( 'get_apw_post_date', $_time, $post, $instance );
 	}
 
 
 	/**
-	 * Generates unique post id based on widget instance
+	 * Generates unique post id based on widget instance and post (obj) ID
 	 *
-	 * Use 'apw_post_id' filter to filter post ID before output.
+	 * Note: The output is not just the ID of the post. It includes the widget instance as well.
+	 * This allows for multiple post lists to be created, each with unique IDs.
+	 *
+	 * Use 'apw_post_id' filter to modify post ID before output.
 	 *
 	 * @access public
 	 * @since 1.0
@@ -476,7 +549,7 @@ class APW_Utils
 	/**
 	 * Generate post classes
 	 *
-	 * Use 'apw_post_class' filter to filter post classes before output.
+	 * Use 'apw_post_class' filter to modify post classes before output.
 	 *
 	 * @access public
 	 * @since 1.0
@@ -484,7 +557,7 @@ class APW_Utils
 	 * @param object $post     Post to display.
 	 * @param array  $instance Widget instance.
 	 *
-	 * @return string $class_str Filtered post classes.
+	 * @return string $class_str CSS classes.
 	 */
 	public static function get_apw_post_class( $post = 0, $instance = array() )
 	{
@@ -519,7 +592,15 @@ class APW_Utils
 	/**
 	 * Retrieves post content
 	 *
-	 * Use 'apw_post_excerpt' to filter the text before output.
+	 * Use 'apw_protected_post_notice to modify password-protected notice.
+	 * Use 'apw_post_excerpt' to modify the text before output.
+	 * Use 'apw_post_excerpt_length' to modify the text length before output.
+	 * Use 'apw_post_excerpt_more' to modify the readmore text before output.
+	 *
+	 * Uses WordPress post_password_required()
+	 * Uses WordPress strip_shortcodes()
+	 * Uses WordPress wp_html_excerpt()
+	 * Uses WordPress wp_trim_words()
 	 *
 	 * @access public
 	 * @since 1.0
@@ -551,7 +632,7 @@ class APW_Utils
 			$_text = str_replace(']]>', ']]&gt;', $_text);
 		}
 
-		$text = apply_filters('apw_post_excerpt', $_text, $post, $instance );
+		$text = apply_filters( 'apw_post_excerpt', $_text, $post, $instance );
 
 		$_length = ( ! empty( $instance['excerpt_length'] ) ) ? absint( $instance['excerpt_length'] ) : 55 ;
 		$length = apply_filters( 'apw_post_excerpt_length', $_length );
@@ -572,7 +653,10 @@ class APW_Utils
 	/**
 	 * Stores a selected image size
 	 *
-	 * @see APW_Utils::build_field_thumb_custom()
+	 * @see Advanced_Posts_Widget_Utils::build_field_thumb_custom()
+	 *
+	 * @uses WordPress sanitize_key()
+	 * @uses WordPress update_option()
 	 *
 	 * @access public
 	 *
@@ -582,6 +666,7 @@ class APW_Utils
 	 */
 	public static function stick_image_size( $size )
 	{
+
 		$apw_img_sizes = get_option( 'apw_img_sizes' );
 
 		$new_size = array();
@@ -606,7 +691,11 @@ class APW_Utils
 	/**
 	 * Removes a selected image size from the apw_img_sizes option
 	 *
-	 * @see APW_Utils::build_field_thumb_custom()
+	 * @see Advanced_Posts_Widget_Utils::build_field_thumb_custom()
+	 *
+	 * @uses WordPress get_option()
+	 * @uses WordPress sanitize_key()
+	 * @uses WordPress update_option()
 	 *
 	 * @access public
 	 *
@@ -640,7 +729,9 @@ class APW_Utils
 
 
 	/**
-	 * Retrieves template file
+	 * Retrieves a APW template file
+	 *
+	 * @see Advanced_Posts_Widget_Utils::get_apw_sub_path()
 	 *
 	 * @access public
 	 *
@@ -651,29 +742,28 @@ class APW_Utils
 	 * @param bool   $require_once Whether to require_once or require. Default true. Has no effect if $load is false.
 	 * @param array  $instance     Widget instance.
 	 *
-	 * @return string $_located The template filename if one is located.
+	 * @return string $located The template filename if one is located.
 	 */
 	public static function get_template( $file, $load = false, $require_once = true, $instance = array() )
 	{
-		$_located = '';
+		$located = '';
 
 		$template_name = "{$file}.php";
-
-		$template_path = APW_Utils::get_apw_sub_path('tpl');
+		$template_path = self::get_apw_sub_path('tpl');
 
 		if ( file_exists( $template_path . $template_name ) ) {
-			$_located = $template_path . $template_name;
+			$located = $template_path . $template_name;
 		}
 
-		if ( $load && '' != $_located ){
+		if ( $load && '' != $located ){
 			if ( $require_once ) {
-				require_once( $_located );
+				require_once( $located );
 			} else {
-				require( $_located );
+				require( $located );
 			}
 		}
 
-		return $_located;
+		return $located;
 	}
 
 
@@ -709,5 +799,173 @@ class APW_Utils
 
 		return $options;
 	}
+
+
+	/**
+	 * Adds a widget to the apw_use_css option
+	 *
+	 * If css_default option is selected in the widget, this will add a reference to that
+	 * widget instance in the apw_use_css option.  The 'apw_use_css' option determines if the
+	 * default stylesheet is enqueued on the front end.
+	 *
+	 * @uses WordPress get_option()
+	 * @uses WordPress update_option()
+	 *
+	 * @access public
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $widget_id Widget instance ID.
+	 */
+	public static function stick_css( $widget_id )
+	{
+		$widgets = get_option( 'apw_use_css' );
+
+		if ( ! is_array( $widgets ) ) {
+			$widgets = array( $widget_id );
+		}
+
+		if ( ! in_array( $widget_id, $widgets ) ) {
+			$widgets[] = $widget_id;
+		}
+
+		update_option('apw_use_css', $widgets);
+	}
+
+
+	/**
+	 * Removes a widget from the apw_use_css option
+	 *
+	 * If css_default option is unselected in the widget, this will remove (if applicable) a
+	 * reference to that widget instance in the apw_use_css option. The 'apw_use_css' option
+	 * determines if the default stylesheet is enqueued on the front end.
+	 *
+	 * @uses WordPress get_option()
+	 * @uses WordPress update_option()
+	 *
+	 * @access public
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $widget_id Widget instance ID.
+	 */
+	public static function unstick_css( $widget_id )
+	{
+		$widgets = get_option( 'apw_use_css' );
+
+		if ( ! is_array( $widgets ) ) {
+			return;
+		}
+
+		if ( ! in_array( $widget_id, $widgets ) ) {
+			return;
+		}
+
+		$offset = array_search($widget_id, $widgets);
+
+		if ( false === $offset ) {
+			return;
+		}
+
+		array_splice( $widgets, $offset, 1 );
+
+		update_option( 'apw_use_css', $widgets );
+	}
+
+
+
+	/**
+	 * Runs a post query based on widget instance settings
+	 *
+	 * Use 'apw_widget_posts_query_args' to filter the post query args.
+	 *
+	 * @uses WordPress WP_Query()
+	 *
+	 * @access public
+	 *
+	 * @since 1.0
+	 *
+	 * @param array  $instance Current widget settings.
+	 * @param object $widget   Widget Object.
+	 *
+	 * @return object $r WP_Query object.
+	 */
+	public static function get_apw_posts( $instance, $widget )
+	{
+
+		// post types
+		$_post_types = ( ! is_array( $instance['post_type'] ) ) ? (array) $instance['post_type'] : $instance['post_type'] ;
+
+		// taxonomies
+		$_tax_query = '';
+		$_tax_terms = array_filter( (array) $instance['tax_term'] );
+
+		if( is_array( $_tax_terms ) && count( $_tax_terms ) ) {
+			foreach( $_tax_terms as $_taxonomy => $_term ) {
+				$_tax_query[] = array(
+					'taxonomy' => $_taxonomy,
+					'field' => 'slug',
+					'terms' => (array) $_term,
+				);
+			}
+			$_tax_query['relation'] = 'AND';
+		}
+
+		// query
+		$_query_args = array(
+			'post_type'           => $_post_types,
+			'posts_per_page'      => absint( $instance['number'] ),
+			'no_found_rows'       => true,
+			'post_status'         => 'publish',
+			'ignore_sticky_posts' => true,
+			'order'               => $instance['order'],
+			'orderby'             => $instance['orderby'],
+			'tax_query'           => $_tax_query,
+		);
+
+		$query_args = apply_filters( 'apw_widget_posts_query_args', $_query_args );
+
+		$r = new WP_Query( $query_args );
+
+		return $r;
+
+	}
+
+
+
+	/** 
+	* Prints link to default widget stylesheet
+	 *
+	 * Actual stylesheet is enqueued if the user selects to use default styles
+	 *
+	 * @see Widget_APW_Recent_Posts::widget()
+	 *
+	 * @access public
+	 *
+	 * @since 1.0
+	 *
+	 * @param array   $instance Current widget settings.
+	 * @param object  $widget   Widget Object.
+	 * @param boolean $echo Flag to echo|return output.
+	 *
+	 * @return string $css_url Stylesheet link.
+	 */
+	public static function css_preview( $instance, $widget, $echo = true )
+	{
+		$_css_url =  self::get_apw_sub_url('css') . 'apw-defaults.css' ;
+		
+		$css_url = sprintf('<link rel="stylesheet" href="%s" type="text/css" media="all" />',
+			esc_url( $_css_url )		
+		);
+		
+		if( $echo ) {
+			echo $css_url;
+		} else {
+			return $css_url;
+		}
+	}
+
+
+
 
 }

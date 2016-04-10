@@ -1,16 +1,18 @@
 <?php
+
 /**
  * The template part for displaying single posts
  *
- * @package APW_Recent_Posts
+ * @package Advanced_Posts_Widget
  * @subpackage Templates
  * @since 1.0
  */
 $apw_post       = get_post();
-$apw_post_id    = APW_Utils::get_apw_post_id( $apw_post, $instance );
-$apw_post_class = APW_Utils::get_apw_post_class( $apw_post, $instance );
-$excerpt_text   = APW_Utils::get_apw_post_excerpt( $apw_post, $instance );
-$apw_post_date  = APW_Utils::get_apw_post_date( $apw_post, $instance );
+$apw_post_id    = Advanced_Posts_Widget_Utils::get_apw_post_id( $apw_post, $instance );
+$apw_post_class = Advanced_Posts_Widget_Utils::get_apw_post_class( $apw_post, $instance );
+$excerpt_text   = Advanced_Posts_Widget_Utils::get_apw_post_excerpt( $apw_post, $instance );
+$post_thumbnail = Advanced_Posts_Widget_Views::apw_post_thumbnail( $apw_post, $instance, false );
+$posted_on      = Advanced_Posts_Widget_Views::apw_posted_on( $apw_post, $instance, false );
 ?>
 
 <?php do_action( 'apw_post_before', $apw_post, $instance ); ?>
@@ -19,17 +21,16 @@ $apw_post_date  = APW_Utils::get_apw_post_date( $apw_post, $instance );
 
 	<?php do_action( 'apw_post_top', $apw_post, $instance ); ?>
 
-	<header class="entry-header">
-		<?php  if( $instance['show_thumb'] ) { APW_Views::apw_thumbnail_div( $apw_post, $instance ); }; ?>
+	<header class="entry-header apw-entry-header">
+		<?php  if( $instance['show_thumb'] ) { echo $post_thumbnail; }; ?>
 		<?php the_title( sprintf( '<h3 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
-		<?php if ( $instance['show_date'] ) { echo $apw_post_date; } ?>
-
+		<?php if ( $instance['show_date'] ) {  echo $posted_on; } ?>
 	</header><!-- /.entry-header -->
 
 	<?php  if( $instance['show_excerpt'] ) { ?>
-		<div class="entry-summary apw-entry-summary">
-			<?php echo wpautop( $excerpt_text ); ?>
-		</div><!-- /.entry-summary -->
+		<span class="entry-summary apw-entry-summary">
+			<?php echo $excerpt_text; ?>
+		</span><!-- /.entry-summary -->
 	<?php }; ?>
 
 	<?php do_action( 'apw_post_bottom', $apw_post, $instance ); ?>

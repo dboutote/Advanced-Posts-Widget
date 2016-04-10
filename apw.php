@@ -27,6 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+
 define( 'ADVANCED_POSTS_WIDGET_FILE', __FILE__ );
 
 
@@ -37,14 +38,14 @@ define( 'ADVANCED_POSTS_WIDGET_FILE', __FILE__ );
  */
 function _advanced_posts_widget_init() {
 
-	include dirname( __FILE__ ) . '/inc/class-apw-utils.php';
-	include dirname( __FILE__ ) . '/inc/class-apw-fields.php';
-	include dirname( __FILE__ ) . '/inc/class-apw-widget.php';
-	include dirname( __FILE__ ) . '/inc/class-apw-views.php';
-	include dirname( __FILE__ ) . '/inc/class-apw-init.php';
+	include dirname( __FILE__ ) . '/inc/class-advanced-posts-widget-utils.php';
+	include dirname( __FILE__ ) . '/inc/class-advanced-posts-widget-fields.php';
+	include dirname( __FILE__ ) . '/inc/class-widget-apw-recent-posts.php';
+	include dirname( __FILE__ ) . '/inc/class-advanced-posts-widget-views.php';
+	include dirname( __FILE__ ) . '/inc/class-advanced-posts-widget-init.php';
 	
-	$APW_Init = new APW_Init( __FILE__ );
-	$APW_Init->init();
+	$Advanced_Posts_Widget_Init = new Advanced_Posts_Widget_Init( __FILE__ );
+	$Advanced_Posts_Widget_Init->init();
 
 }
 add_action( 'plugins_loaded', '_advanced_posts_widget_init', 99 );

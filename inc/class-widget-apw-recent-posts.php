@@ -1,11 +1,11 @@
 <?php
 /**
- * APW_Widget Class
+ * Widget_APW_Recent_Posts Class
  *
  * Adds a Posts widget with extended functionality
  *
  * @package Advanced_Posts_Widget
- * @subpackage APW_Widget
+ * @subpackage Widget_APW_Recent_Posts
  *
  * @since 1.0
  */
@@ -25,7 +25,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @see WP_Widget
  */
-class APW_Widget extends WP_Widget {
+class Widget_APW_Recent_Posts extends WP_Widget 
+{
 
 	/**
 	 * Sets up a new widget instance.
@@ -37,8 +38,8 @@ class APW_Widget extends WP_Widget {
 	public function __construct()
 	{
 		$widget_options = array(
-			'classname'                   => 'widget_apw_recent_posts widget_recent_entries advanced-posts-widget',
-			'description'                 => __( 'A posts widget with extended features.' ),
+			'classname'                   => 'widget_apw_recent_posts advanced-posts-widget',
+			'description'                 => __( 'A recent posts widget with extended features.' ),
 			'customize_selective_refresh' => true,
 			);
 
@@ -46,12 +47,13 @@ class APW_Widget extends WP_Widget {
 
 		parent::__construct(
 			'advanced-posts-widget',       // $this->id_base
-			__( 'Advanced Posts Widget' ), // $this->name
+			__( 'Advanced Recent Posts' ), // $this->name
 			$widget_options,               // $this->widget_options
 			$control_options               // $this->control_options
 		);
 
 		$this->alt_option_name = 'widget_apw_recent_posts';
+
 	}
 
 
@@ -73,53 +75,21 @@ class APW_Widget extends WP_Widget {
 		if ( ! isset( $args['widget_id'] ) ){
 			$args['widget_id'] = $this->id;
 		}
-		
-		$_defaults = APW_Utils::instance_defaults();
+
+		$_defaults = Advanced_Posts_Widget_Utils::instance_defaults();
 		$instance = wp_parse_args( (array) $instance, $_defaults );
-		
+
 		// build out the instance for devs
 		$instance['id_base']       = $this->id_base;
 		$instance['widget_number'] = $this->number;
 		$instance['widget_id']     = $this->id;
-
+	
 		// widget title
 		$_title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
-
-		// post types
-		$_post_types = ( ! is_array( $instance['post_type'] ) ) ? (array) $instance['post_type'] : $instance['post_type'] ;
-
-		// taxonomies
-		$_tax_query = '';
-		$_tax_terms = array_filter( (array) $instance['tax_term'] );
-
-		if( is_array( $_tax_terms ) && count( $_tax_terms ) ) {
-			foreach( $_tax_terms as $_taxonomy => $_term ) {
-				$_tax_query[] = array(
-					'taxonomy' => $_taxonomy,
-					'field' => 'slug',
-					'terms' => (array) $_term,
-				);
-			}
-			$_tax_query['relation'] = 'AND';
-		}
-
-		// query
-		$_query_args = array(
-			'post_type'           => $_post_types,
-			'posts_per_page'      => absint( $instance['number'] ),
-			'no_found_rows'       => true,
-			'post_status'         => 'publish',
-			'ignore_sticky_posts' => true,
-			'order'               => $instance['order'],
-			'orderby'             => $instance['orderby'],
-			'tax_query'           => $_tax_query,
-		);
-
-		$query_args = apply_filters( 'apw_widget_posts_query_args', $_query_args );
-
-		$r = new WP_Query( $query_args );
-
-		if ( $r->have_posts() ) :
+		
+		$r = Advanced_Posts_Widget_Utils::get_apw_posts( $instance, $this );
+		
+		if ( $r && $r->have_posts() ) :
 
 			echo $args['before_widget'];
 
@@ -128,6 +98,17 @@ class APW_Widget extends WP_Widget {
 			};
 
 			do_action( 'apw_widget_title_after', $instance, $r );
+			
+			/**
+			 * Prints out the css url only if in Customizer
+			 * 
+			 * Actual stylesheet is enqueued if the user selects to use default styles
+			 * 
+			 * @since 1.0
+			 */
+			if( ! empty( $instance['css_default'] ) && is_customize_preview() ) {
+				echo Advanced_Posts_Widget_Utils::css_preview( $instance, $this );
+			}
 			?>
 
 			<div class="advanced-posts-widget apw-recent-posts apw-posts-wrap">
@@ -136,19 +117,19 @@ class APW_Widget extends WP_Widget {
 
 				do_action( 'apw_post_list_before', $instance, $r );
 
-				APW_Views::start_list( $instance, $r );
+				Advanced_Posts_Widget_Views::start_list( $instance, $r );
 
 				while ( $r->have_posts() ) : $r->the_post();
 
-					APW_Views::start_list_item( $instance, $r );
+					Advanced_Posts_Widget_Views::start_list_item( $instance, $r );
 
-						APW_Utils::get_template( "content-{$instance['item_format']}", $load = true, $require_once = false, $instance );
+						Advanced_Posts_Widget_Utils::get_template( "content-{$instance['item_format']}", $load = true, $require_once = false, $instance );
 
-					APW_Views::end_list_item( $instance, $r );
+					Advanced_Posts_Widget_Views::end_list_item( $instance, $r );
 
 				endwhile;
 
-				APW_Views::end_list( $instance, $r );
+				Advanced_Posts_Widget_Views::end_list( $instance, $r );
 
 				do_action( 'apw_post_list_after', $instance, $r );
 
@@ -156,7 +137,7 @@ class APW_Widget extends WP_Widget {
 
 			</div><!-- /.apw-posts-wrap -->
 
-			<?php APW_Views::colophon(); ?>
+			<?php Advanced_Posts_Widget_Views::colophon(); ?>
 
 			<?php echo $args['after_widget']; ?>
 
@@ -208,11 +189,9 @@ class APW_Widget extends WP_Widget {
 
 		$_thumb_size_w            = absint( $new_instance['thumb_size_w'] );
 		$instance['thumb_size_w'] = ( $_thumb_size_w < 1 ) ? 55 : $_thumb_size_w ;
-		
+
 		$_thumb_size_h            = absint( $new_instance['thumb_size_h'] );
 		$instance['thumb_size_h'] = ( $_thumb_size_h < 1 ) ? $_thumb_size_w : $_thumb_size_h ;
-		
-		$instance['register_thumb'] = isset( $new_instance['register_thumb'] ) ? 1 : 0 ;
 
 		// excerpts
 		$instance['show_excerpt']   = isset( $new_instance['show_excerpt'] ) ? 1 : 0 ;
@@ -224,8 +203,16 @@ class APW_Widget extends WP_Widget {
 		$instance['show_date']   = isset( $new_instance['show_date'] ) ? 1 : 0 ;
 		$instance['date_format'] = esc_html( $new_instance['date_format'] );
 
-		$instance = apply_filters('apw_update_instance', $instance, $new_instance, $old_instance );
+		// styles & layout
+		$instance['css_default'] = isset( $new_instance['css_default'] ) ? 1 : 0 ;
 
+		// build out the instance for devs
+		$instance['id_base']       = $this->id_base;
+		$instance['widget_number'] = $this->number;
+		$instance['widget_id']     = $this->id;
+
+		$instance = apply_filters('apw_update_instance', $instance, $new_instance, $old_instance, $this );
+		
 		do_action( 'apw_update_widget', $this, $instance, $new_instance, $old_instance );
 
 		return $instance;
@@ -245,11 +232,11 @@ class APW_Widget extends WP_Widget {
 	 */
 	public function form( $instance )
 	{
-		$defaults = APW_Utils::instance_defaults();
+		$defaults = Advanced_Posts_Widget_Utils::instance_defaults();
 
 		$instance = wp_parse_args( (array) $instance, $defaults );
 
-		include( APW_Utils::get_apw_sub_path('inc') . 'widget-form.php' );
+		include( Advanced_Posts_Widget_Utils::get_apw_sub_path('inc') . 'widget-form.php' );
 
 	}
 
