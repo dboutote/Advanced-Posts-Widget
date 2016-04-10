@@ -62,6 +62,8 @@ This widget was built not only with end-users in mind, but also plugin developer
 * Need to modify the output of the widget?  Easy!  The output is passed through numerous filters, allowing you to customize the post list to meet your project's requirements.
 * For a full list of action hooks and filters, please see the plugin documentation: http://darrinb.com/plugins/advanced-posts-widget
 
+For sample functions check out this small testing plugin: https://github.com/dboutote/Advanced-Posts-Widget-Testing
+
 
 # Installation
 
