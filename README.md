@@ -1,11 +1,10 @@
 # Advanced Posts Widget
 
-Build a better posts list.
+_Build a better post list._
 
 The Advanced Posts Widget is a powerful and flexible recent posts widget for WordPress that makes building and displaying customized content lists a snap.  Supports all custom post types and taxonomies!
 
 Make your post lists stand out with this highly customizable recent post widget!
-
 
 ## Features
 
@@ -24,6 +23,8 @@ Make your post lists stand out with this highly customizable recent post widget!
 * Show post date.
 * Set _and preview_ multiple date formats.
 * Choose the default (basic) CSS styling or roll your own.
+
+![list in sidebar](assets/screenshot-6.jpg?raw=true "Easily create comment lists!")
 
 #### Multiple Lists Support
 
@@ -51,7 +52,7 @@ The Advanced Posts Widget automatically detects your theme's support for `html5`
 
 #### Default CSS Styles
 
-The Advanced Posts Widget comes installed with a default stylesheet option to get you going.  (The stying is based on the twentysixteen core theme.) Selecting the Default Styles option will give you a quick start to styling your posts list.  For more control over the look and feel of your list, the widget also has a number of classes available to further customize its appearance to match your theme.
+The Advanced Posts Widget comes installed with a default stylesheet option to get you going.  (The styling is based on the twentysixteen core theme.) Selecting the Default Styles option will give you a quick start to styling your posts list.  For more control over the look and feel of your list, the widget also has a number of classes available to further customize its appearance to match your theme.
 
 
 ## Developer Features
@@ -72,6 +73,7 @@ For sample functions check out this small testing plugin: https://github.com/dbo
 * Download and install using the built in WordPress plugin installer.
 * Activate in the "Plugins" area of your admin by clicking the "Activate" link.
 * No further setup or configuration is necessary.
+* Head on over to the Widgets screen or the Customizer to start building your lists!
 
 ### From GitHub:
 

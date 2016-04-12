@@ -268,7 +268,7 @@ class Advanced_Posts_Widget_Utils
 
 		if( is_array( $post_types ) ) {
 
-			if( (bool) $post_types['all'] ) {
+			if( ! empty( $post_types['all'] ) ) {
 				unset( $post_types['all'] );
 			}
 
@@ -291,7 +291,7 @@ class Advanced_Posts_Widget_Utils
 			if( count( $_post_type_taxes ) ){
 				foreach ( $_post_type_taxes as $_post_type_tax) {
 					$_taxonomy = get_taxonomy( $_post_type_tax );
-					if( (bool) $_taxonomy ) {
+					if( $_taxonomy ) {
 						$_ptaxes[ $_post_type_tax ] = $_taxonomy->labels->singular_name;
 					}
 				}
@@ -299,12 +299,12 @@ class Advanced_Posts_Widget_Utils
 		}
 
 		// post_format is a registered taxonomy, but may not be supported by the theme
-		if( (bool) $_ptaxes['post_format'] && ! current_theme_supports( 'post-formats' ) ) {
+		if( ! empty( $_ptaxes['post_format'] ) && ! current_theme_supports( 'post-formats' ) ) {
 			unset( $_ptaxes['post_format'] );
 		}
 
 		// screw that, post_formats are for display, not classification
-		if( (bool) $_ptaxes['post_format'] ) {
+		if( ! empty( $_ptaxes['post_format'] ) ) {
 			unset( $_ptaxes['post_format'] );
 		}
 
@@ -383,9 +383,9 @@ class Advanced_Posts_Widget_Utils
 	 *
 	 * @since 1.0
 	 *
-	 * @return string Name of image size.
-	 *         array  Image size settings; name, width, height, crop.
-	 *		   bool   False if size doesn't exist.
+	 * @return string  Name of image size.
+	 *         array   Image size settings; name, width, height, crop.
+	 *		   boolean False if size doesn't exist.
 	 */
 	public static function get_apw_image_size( $size = 'thumbnail', $fields = 'all' )
 	{
@@ -737,10 +737,10 @@ class Advanced_Posts_Widget_Utils
 	 *
 	 * @since 1.0
 	 *
-	 * @param string $file         Template file to search for.
-	 * @param boo    $load         If true the template file will be loaded if it is found.
-	 * @param bool   $require_once Whether to require_once or require. Default true. Has no effect if $load is false.
-	 * @param array  $instance     Widget instance.
+	 * @param string  $file         Template file to search for.
+	 * @param boolean $load         If true the template file will be loaded if it is found.
+	 * @param boolean $require_once Whether to require_once or require. Default true. Has no effect if $load is false.
+	 * @param array   $instance     Widget instance.
 	 *
 	 * @return string $located The template filename if one is located.
 	 */
@@ -774,8 +774,8 @@ class Advanced_Posts_Widget_Utils
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $options Values used for select options
-	 * @param bool  $sort    Flag to sort the values alphabetically.
+	 * @param array   $options Values used for select options
+	 * @param boolean $sort    Flag to sort the values alphabetically.
 	 *
 	 * @return array $options Sanitized values.
 	 */
@@ -873,7 +873,6 @@ class Advanced_Posts_Widget_Utils
 	}
 
 
-
 	/**
 	 * Runs a post query based on widget instance settings
 	 *
@@ -932,8 +931,7 @@ class Advanced_Posts_Widget_Utils
 	}
 
 
-
-	/** 
+	/**
 	* Prints link to default widget stylesheet
 	 *
 	 * Actual stylesheet is enqueued if the user selects to use default styles
@@ -946,18 +944,18 @@ class Advanced_Posts_Widget_Utils
 	 *
 	 * @param array   $instance Current widget settings.
 	 * @param object  $widget   Widget Object.
-	 * @param boolean $echo Flag to echo|return output.
+	 * @param boolean $echo     Flag to echo|return output.
 	 *
 	 * @return string $css_url Stylesheet link.
 	 */
 	public static function css_preview( $instance, $widget, $echo = true )
 	{
 		$_css_url =  self::get_apw_sub_url('css') . 'apw-defaults.css' ;
-		
+
 		$css_url = sprintf('<link rel="stylesheet" href="%s" type="text/css" media="all" />',
-			esc_url( $_css_url )		
+			esc_url( $_css_url )
 		);
-		
+
 		if( $echo ) {
 			echo $css_url;
 		} else {

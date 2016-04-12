@@ -7,11 +7,11 @@ Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A powerful and flexible recent posts widget for WordPress for building and displaying customized content lists.  Supports all custom post types and taxonomies!
+A powerful and flexible recent posts widget for WordPress for displaying customized content lists.  Supports all custom post types and taxonomies!
 
 == Description ==
 
-Build a better posts list.
+_Build a better post list._
 
 The Advanced Posts Widget is an enhanced version of the default WordPress Recent Posts widget.  It allows for greater customization and stying of your recent content lists.
 
@@ -44,21 +44,17 @@ This widget was built not only with end-users in mind, but also plugin developer
 * Need to modify the output of the widget?  Easy!  The output is passed through numerous filters, allowing you to customize the post list to meet your project's requirements.
 * For a full list of action hooks and filters, please see the plugin documentation: http://darrinb.com/plugins/advanced-posts-widget
 
+For sample functions check out this small testing plugin: https://github.com/dboutote/Advanced-Posts-Widget-Testing
+
 
 == Installation ==
 
 = From the WordPress.org plugin repository: =
 
-* Download and install using the built in WordPress plugin installer.
+* Download and install using the built-in WordPress plugin installer.
 * Activate in the "Plugins" area of your admin by clicking the "Activate" link.
 * No further setup or configuration is necessary.
-
-= From GitHub: =
-
-* Download the [latest stable version](https://github.com/dboutote/Advanced-Posts-Widget/archive/master.zip).
-* Extract the zip folder to your plugins directory.
-* Activate in the "Plugins" area of your admin by clicking the "Activate" link.
-* No further setup or configuration is necessary.
+* Head on over to the Widgets screen or the Customizer to start building your lists!
 
 
 == Frequently Asked Questions ==
@@ -74,9 +70,11 @@ Of course! Have an idea for a feature?  Reach out on the plugin's official page.
 == Screenshots ==
 
 1. Multiple widget options.
-2. Preview your thumbnail size selection.
-3. Easily create a stylish posts list with thumbnails and excerpts.
-3. Example posts list in sidebar.
+2. Thumbnail size selection.
+3. Preview your thumbnail size selection.
+4. Preview your excerpt size selection.
+5. Auto-detect list formatting.
+6. Example posts list in sidebar.
 
 
 == Changelog ==
