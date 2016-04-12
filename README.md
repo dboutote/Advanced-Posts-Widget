@@ -24,7 +24,7 @@ Make your post lists stand out with this highly customizable recent post widget!
 * Set _and preview_ multiple date formats.
 * Choose the default (basic) CSS styling or roll your own.
 
-![list in sidebar](assets/screenshot-6.jpg?raw=true "Easily create comment lists!")
+![list in sidebar](assets/screenshot-6.png?raw=true "Easily create comment lists!")
 
 #### Multiple Lists Support
 
