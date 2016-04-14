@@ -338,7 +338,8 @@ class Advanced_Posts_Widget_Fields
 	{
 		$args = apply_filters( 'apw_build_term_select_args', array( 'hide_empty' => 0, 'number' => 99 ) );
 		$args['fields'] = 'all'; // don't allow override
-		$_terms = get_terms( $taxonomy, $args );
+		$args['taxonomy'] = $taxonomy; // don't allow override
+		$_terms = get_terms( $args );
 
 		if( empty( $_terms )&& 'post_format' === $taxonomy ){
 			$formats = get_theme_support( 'post-formats' );
@@ -362,7 +363,7 @@ class Advanced_Posts_Widget_Fields
 			<label for="<?php echo $widget->get_field_id( 'tax_term-' . $taxonomy ); ?>">
 				<?php printf( __( '%s:', 'advanced-posts-widget' ), $label )?>
 			</label>
-			
+
 			<select name="<?php echo $widget->get_field_name( 'tax_term' ) . '[' . $taxonomy . ']'; ?>" id="<?php echo $widget->get_field_id( 'tax_term-' . $taxonomy ); ?>" class="widefat">
 				<option value></option>
 				<?php
@@ -642,7 +643,7 @@ class Advanced_Posts_Widget_Fields
 		?>
 
 		<hr />
-		
+
 		<p>
 			<?php _e( 'List Item Format:', 'advanced-posts-widget' ); ?><br />
 			<label>
@@ -684,7 +685,7 @@ class Advanced_Posts_Widget_Fields
 				<?php _e( 'Display Post Date?', 'advanced-posts-widget' ); ?>
 			</label>
 		</p>
-		
+
 		<?php
 		$field = ob_get_clean();
 
@@ -747,14 +748,14 @@ class Advanced_Posts_Widget_Fields
 	{
 		ob_start();
 		?>
-		
+
 		<p>
 			<input id="<?php echo $widget->get_field_id( 'css_default' ); ?>" name="<?php echo $widget->get_field_name( 'css_default' ); ?>" type="checkbox" <?php checked( $instance['css_default'], 1 ); ?> />
 			<label for="<?php echo $widget->get_field_id( 'css_default' ); ?>">
 				<?php _e( 'Use Default Styles?', 'advanced-posts-widget' ); ?>
 			</label>
 		</p>
-		
+
 		<?php
 		$field = ob_get_clean();
 
